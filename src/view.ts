@@ -3,11 +3,10 @@ import Map from "@arcgis/core/Map";
 import SceneLayer from "@arcgis/core/layers/SceneLayer";
 import VectorTileLayer from "@arcgis/core/layers/VectorTileLayer";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
-import Collection from "@arcgis/core/core/Collection.js";
 import LabelClass from "@arcgis/core/layers/support/LabelClass.js";
 import * as typeRendererCreator from "@arcgis/core/smartMapping/renderers/type.js";
 import Renderer from "@arcgis/core/renderers/Renderer";
-import * as colorRendererCreator from "@arcgis/core/smartMapping/renderers/color.js";
+//import * as colorRendererCreator from "@arcgis/core/smartMapping/renderers/color.js";
 
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo.js";
 import esriId from "@arcgis/core/identity/IdentityManager.js";
@@ -49,7 +48,7 @@ export const createScene = async (
   //   {title: 'Breadcrumbs', id: 'track-vehicle'} as __esri.ActionButton]);
   setStats(await updateStats(vehicles));
   setSupervisors(await updateSupervisors(vehicles));
-  const history: FeatureLayer = await addHistoryLayer(map, view);
+  await addHistoryLayer(map, view);
   addBoundaries(map, view);
 
   // view.popup.on('trigger-action', e => {
@@ -140,6 +139,7 @@ const addVehicles = async (map: Map): Promise<FeatureLayer> => {
   return vehicles;
 }
 const addHistoryLayer = async (map: Map, view: SceneView): Promise<FeatureLayer> => {
+  console.log(view);
   const history = new FeatureLayer({
     portalItem: {
       id: "8d573a0b2e1449d2be987b4c36e909ea"
@@ -393,29 +393,29 @@ const getRendererVehicles = (): Renderer => {
   return ren as unknown as Renderer;
 };
 
-const goToSelectedVehicle = async (
-  id: string,
-  layer: FeatureLayer,
-  view: SceneView
-) => {
-  const featureSet = await layer.queryFeatures({
-    where: `deviceid = '${id}'`,
-    outFields: ["objectid", "bearing", "deviceid"],
-    returnGeometry: true,
-  });
-  if (featureSet.features.length) {
-    view.goTo(
-      {
-        center: featureSet.features[0].geometry,
-        zoom: 18,
-        heading: featureSet.features[0].getAttribute("bearing"),
-        tilt: 45,
-      },
-      { easing: "linear" }
-    );
-    view.popup.features = featureSet.features;
-  }
-};
+// const goToSelectedVehicle = async (
+//   id: string,
+//   layer: FeatureLayer,
+//   view: SceneView
+// ) => {
+//   const featureSet = await layer.queryFeatures({
+//     where: `deviceid = '${id}'`,
+//     outFields: ["objectid", "bearing", "deviceid"],
+//     returnGeometry: true,
+//   });
+//   if (featureSet.features.length) {
+//     view.goTo(
+//       {
+//         center: featureSet.features[0].geometry,
+//         zoom: 18,
+//         heading: featureSet.features[0].getAttribute("bearing"),
+//         tilt: 45,
+//       },
+//       { easing: "linear" }
+//     );
+//     view.popup.features = featureSet.features;
+//   }
+// };
 
 const getVehicleLabels = () => {
   return new LabelClass({
@@ -439,16 +439,16 @@ const getVehicleLabels = () => {
 }
 
 
-const getHistoryRenderer = async (layer: FeatureLayer, view: SceneView) => {
-  const exp = "var age = DateDiff(Now(), Date($feature['DateTimeStamp']), 'hours');return age";
-  const renderer = await colorRendererCreator.createContinuousRenderer({
-    symbolType: "3d-flat",
-    layer: layer,
-    view: view,
-    valueExpression: exp,
-    minValue: 0,
-    maxValue: 24
-  });
+// const getHistoryRenderer = async (layer: FeatureLayer, view: SceneView) => {
+//   const exp = "var age = DateDiff(Now(), Date($feature['DateTimeStamp']), 'hours');return age";
+//   const renderer = await colorRendererCreator.createContinuousRenderer({
+//     symbolType: "3d-flat",
+//     layer: layer,
+//     view: view,
+//     valueExpression: exp,
+//     minValue: 0,
+//     maxValue: 24
+//   });
 
-  return renderer.renderer;
-}
+//   return renderer.renderer;
+// }

@@ -25,7 +25,7 @@ function App() {
   const sceneDiv = useRef<HTMLDivElement>(null);
   const [stats, setStats] = useState<Stats>();
   const [view, setView] = useState<__esri.SceneView>();
-  const [filters, setFilters] = useState<FilterValue[]>([
+  const [filters] = useState<FilterValue[]>([
     {
       label: "ALL TRUCKS",
       where: `groupnames like '%Garbage%' or groupnames like '%Recyc%' or groupnames like '%Yard%'`,
